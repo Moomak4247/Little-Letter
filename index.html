@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5ecdd">
+<title>Little Letter — การ์ดเซอร์ไพรส์ซองจดหมาย ส่งเป็นลิงก์ให้คนพิเศษ</title>
+<meta name="description" content="Little Letter การ์ดเซอร์ไพรส์ซองจดหมายแอนิเมชันที่เปลี่ยนตามโอกาส ใส่ข้อความ รูป และเพลงของคุณ ส่งเป็นลิงก์เดียว ราคาเริ่มต้น 49 บาท">
+<meta property="og:title" content="Little Letter — จดหมายถึงคนพิเศษ">
+<meta property="og:description" content="การ์ดเซอร์ไพรส์ซองจดหมายแอนิเมชัน ส่งเป็นลิงก์เดียว">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f5ecdd; --cream-deep:#ecdfc9; --paper:#fffbf2; --ink:#4a3c31; --muted:#6f5f50;
+  --accent:#9c5b5b; --accent-dark:#834848; --pink:#f2b5ad; --butter:#f6dc8e; --sage:#b5c9aa; --sky:#bfd8e3;
+  --line:#e6d7bc; --kraft:#e2c8a4;
+  --display:"Mali","Noto Sans Thai",system-ui,sans-serif;
+  --sans:"Noto Sans Thai",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;
+  background:radial-gradient(900px 420px at 50% -100px,#fffaf0,transparent 70%),radial-gradient(rgba(120,95,60,.08) 1px,transparent 1.3px) 0 0/22px 22px,var(--cream);
+  padding-bottom:env(safe-area-inset-bottom,0px);min-height:100vh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+img{max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+section[id]{scroll-margin-top:72px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+h1,h2,h3,p{margin:0}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.5;text-wrap:balance}
+h2{font-size:clamp(1.5rem,5.4vw,2rem)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 24px;font-weight:600;background:var(--accent);color:#fff;text-decoration:none;min-height:46px;transition:background .2s,transform .1s}
+.btn:hover{background:var(--accent-dark)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--accent-dark);border:1.5px solid var(--accent)}
+.btn.ghost:hover{background:var(--paper)}
+.btn.plain{background:var(--ink)}
+.btn.sm{padding:8px 18px;min-height:38px;font-size:.92rem}
+.link{background:none;border:0;padding:0;color:var(--accent-dark);text-decoration:underline;text-underline-offset:4px;font-weight:500}
+
+/* doodles */
+.dd{width:34px;height:34px;flex:none}
+.dd.lg{width:48px;height:48px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:30;background:rgba(245,236,221,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:1.3rem;color:var(--ink);text-decoration:none;line-height:1}
+.logo .dd{width:26px;height:26px}
+
+/* hero */
+.hero{position:relative;display:grid;gap:30px;padding:36px 20px 46px}
+.hero h1{font-size:clamp(1.85rem,7.6vw,2.9rem);font-weight:700;line-height:1.55}
+.hero .lead{margin-top:14px;color:var(--muted);max-width:34em}
+.hero .cta{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:24px}
+.hero .fine{margin-top:16px;font-size:.9rem;color:var(--muted)}
+.hero-dd{position:absolute;pointer-events:none}
+.hero-dd.a{top:8px;right:14px;transform:rotate(12deg)}
+.hero-dd.b{top:46px;right:62px;width:20px;height:20px;transform:rotate(-8deg)}
+.demo-note{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--display);font-weight:500;font-size:1.1rem;color:var(--accent-dark);margin-bottom:10px}
+.demo-note .dd{width:22px;height:22px}
+@media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr;align-items:center;gap:56px;padding:64px 20px 76px}.hero-dd.a{top:30px;right:40px}.hero-dd.b{top:78px;right:100px}}
+
+/* letter component */
+.letter{background:var(--paper);border:1px solid #eadfca;border-radius:28px;box-shadow:0 20px 56px rgba(110,85,50,.15);padding:28px 20px 24px;text-align:center;max-width:440px;margin:0 auto;overflow:hidden}
+.l-kicker{font-family:var(--display);font-weight:500;font-size:1rem;color:var(--accent-dark)}
+.l-headline{font-size:clamp(1.4rem,6vw,1.8rem);margin:4px 0 6px}
+.l-intro{color:var(--muted);font-size:.95rem}
+.env-btn{display:block;margin:22px auto 6px;width:min(80vw,320px);border:0;background:none;padding:0;border-radius:14px}
+.envelope{display:block;height:200px;position:relative;filter:drop-shadow(0 14px 14px rgba(110,80,40,.2));perspective:800px}
+.envelope>span,.envelope>svg{display:block}
+.env-back{position:absolute;inset:0;background:var(--kraft);border-radius:14px}
+.env-peek{position:absolute;left:8%;right:8%;bottom:14px;height:150px;background:var(--paper);border:1px solid #eadcc4;border-radius:8px;transition:transform .7s}
+.env-peek:before{content:"with love";display:block;font:600 1.1rem var(--display);color:var(--accent);margin-top:22px}
+.env-flap{position:absolute;inset:0;background:#efdcbd;clip-path:polygon(0 0,100% 0,50% 59%);transform-origin:top;transition:transform .7s,opacity .7s;z-index:4}
+.env-pocket{position:absolute;inset:0;background:#d5b790;clip-path:polygon(0 100%,0 0,50% 58%,100% 0,100% 100%);border-radius:0 0 14px 14px;z-index:3}
+.envelope>.env-seal{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);z-index:5;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-size:20px;transition:opacity .3s;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.envelope>.env-face{position:absolute;left:50%;top:67%;transform:translateX(-50%);z-index:6;width:76px;height:34px}
+.envelope.opened .env-flap{transform:rotateX(180deg);opacity:0;z-index:1}
+.envelope.opened .env-seal{opacity:0}
+.envelope.opened .env-peek{transform:translateY(-60px)}
+.hint{font-size:.9rem;color:var(--muted);margin:14px 0 4px}
+.message{display:none;text-align:left;margin:20px 0 0;padding:20px 18px 22px;background:#fff;border:1px solid var(--line);border-radius:20px;animation:rise .7s both}
+.message.show{display:block}
+.l-title{font:600 1.35rem var(--display);color:var(--accent-dark);text-align:center;margin:0 0 14px;line-height:1.5}
+.message-text{white-space:pre-wrap;line-height:2;overflow-wrap:anywhere}
+.signature{text-align:right;font:600 1.1rem var(--display);color:var(--accent-dark);margin-top:18px}
+.photo{display:none;width:100%;max-height:340px;object-fit:cover;border-radius:14px;margin-bottom:16px}
+.photo.show{display:block}
+.music-row{display:none;margin-top:18px;text-align:center;font-size:.9rem;color:var(--muted)}
+.music-row.show{display:block}
+.music-row audio{width:100%;height:42px;margin-top:6px}
+.end-btn{display:block;margin:22px auto 0;border:1.5px solid var(--accent);background:#fff;color:var(--accent-dark);padding:11px 22px;border-radius:999px;font-weight:600}
+.end-note{margin-top:12px;text-align:center;font:600 1.1rem var(--display);color:var(--accent-dark);min-height:1px}
+.replay{display:block;margin:14px auto 0;background:none;border:0;color:var(--muted);font-size:.85rem;text-decoration:underline;text-underline-offset:3px}
+.heart{position:fixed;bottom:-35px;z-index:99;pointer-events:none;animation:floatUp linear forwards;color:var(--accent)}
+.confetti{position:fixed;top:-16px;width:9px;height:14px;border-radius:2px;z-index:99;pointer-events:none;animation:confettiFall linear forwards}
+@keyframes floatUp{to{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+@keyframes confettiFall{to{transform:translateY(108vh) rotate(var(--r,360deg));opacity:.9}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* occasion scenes */
+.fx{position:relative;max-width:250px;margin:0 auto 14px}
+.fx-btn{display:block;width:100%;border:0;background:none;padding:0;border-radius:18px}
+.fx svg{display:block;width:100%;height:auto;overflow:visible}
+.fx svg *{transform-box:fill-box}
+.fx-cap{text-align:center;font-size:.88rem;color:var(--muted);margin-top:2px;min-height:1.7em}
+@keyframes flick{0%,100%{transform:scale(1,1) rotate(-2deg)}50%{transform:scale(.86,1.12) rotate(3deg)}}
+.flame{transform-origin:50% 100%;animation:flick .5s ease-in-out infinite;transition:opacity .25s}
+.blown .flame{animation:none;opacity:0}
+@keyframes smoke{0%{opacity:0;transform:translateY(0) scale(.6)}30%{opacity:.8}100%{opacity:0;transform:translateY(-28px) scale(1.5)}}
+.smoke{opacity:0}
+.blown .smoke{animation:smoke 1.6s ease-out forwards}
+.blown .smoke.s2{animation-delay:.15s}
+.blown .smoke.s3{animation-delay:.3s}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.07)}70%{transform:scale(1)}}
+.beat{transform-origin:center;animation:beat 1.7s ease-in-out infinite}
+@keyframes floatHeart{0%{transform:translateY(0) scale(.4);opacity:0}20%{opacity:1}100%{transform:translateY(-64px) scale(1);opacity:0}}
+.fh{transform-origin:center;opacity:0;animation:floatHeart 3.2s ease-out infinite}
+@keyframes twinkle{0%,100%{transform:scale(.6);opacity:.5}50%{transform:scale(1.1);opacity:1}}
+.tw{transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
+@keyframes popin{from{transform:scale(0)}to{transform:scale(1)}}
+.pop{transform-origin:center;animation:popin .55s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rays{transform-origin:center;animation:spin 14s linear infinite}
+.cloud-g{transition:transform .9s ease,opacity .9s ease}
+.cleared .cloud-g{transform:translateX(100px);opacity:0}
+.sun-g{opacity:0;transform:translateY(26px) scale(.6);transform-origin:center;transition:opacity .8s .3s,transform .8s .3s}
+.cleared .sun-g{opacity:1;transform:none}
+@keyframes drop{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(40px);opacity:0}}
+.drop{opacity:0;animation:drop 1.1s ease-in infinite}
+.cleared .drop{animation:none;opacity:0}
+@keyframes meetL{from{transform:translateX(-72px)}to{transform:translateX(10px)}}
+@keyframes meetR{from{transform:translateX(72px)}to{transform:translateX(-10px)}}
+.meet-l{animation:meetL 1.4s cubic-bezier(.2,.8,.3,1) both}
+.meet-r{animation:meetR 1.4s cubic-bezier(.2,.8,.3,1) both}
+.pair{transform-origin:center;animation:beat 1.7s ease-in-out 1.5s infinite}
+@keyframes grow{to{stroke-dashoffset:0}}
+.stem{fill:none;stroke:#7f9a74;stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:grow .9s ease-out .1s forwards}
+.arc{fill:none;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:grow 1.1s ease-out forwards}
+@keyframes sway{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.sw{transform-origin:50% 100%}
+.sway .sw{animation:sway 1s ease-in-out 2}
+
+/* sections */
+.band{padding:54px 0}
+.band.paper{background:var(--paper);border-block:1px solid #eadfca}
+.sec-head{position:relative;max-width:34em;margin-bottom:26px}
+.sec-head h2{padding-right:56px}
+.sec-head p{color:var(--muted);margin-top:6px}
+.sec-head .dd{position:absolute;right:0;top:0}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.steps li{display:grid;grid-template-columns:50px 1fr;gap:14px;align-items:start}
+.steps .n{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--butter);border:2px solid var(--ink);font:700 1.2rem var(--display)}
+.steps h3{font:600 1.1rem var(--display)}
+.steps p{color:var(--muted)}
+@media(min-width:760px){.steps{grid-template-columns:repeat(3,1fr);gap:36px}.steps li{grid-template-columns:1fr;gap:10px}}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--cream);border-radius:999px;padding:8px 18px 8px 12px;font-weight:500;transition:all .2s}
+.chip .dd{width:22px;height:22px}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.price-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.price-row{display:grid;gap:14px;padding:22px 0;border-bottom:1px solid var(--line)}
+.pr-main h3{font:600 1.35rem var(--display);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{font:600 .75rem var(--sans);background:var(--butter);color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:0 10px}
+.pr-sub{color:var(--muted);font-size:.95rem}
+.pr-main ul{margin:8px 0 0;padding-left:1.2em}
+.pr-side{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.price{font:700 2rem/1 var(--display);color:var(--accent-dark)}
+@media(min-width:760px){.price-row{grid-template-columns:1fr auto;align-items:center;gap:40px}.pr-side{flex-direction:column;align-items:flex-end;gap:10px}}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 18px;max-width:640px}
+.field{display:block;margin-top:16px}
+.field>span{display:block;font-weight:500;font-size:.93rem;margin-bottom:6px}
+.field input[type=text],.field input[type=url],.field select,.field textarea{width:100%;border:1.5px solid #dccdb0;border-radius:12px;padding:11px 13px;background:#fffdf7;min-height:46px}
+.field textarea{min-height:130px;line-height:1.75;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(156,91,91,.18)}
+.field small,.hint-s{display:block;color:var(--muted);font-size:.82rem;line-height:1.6;margin-top:5px}
+.row2{display:grid;gap:0 14px}
+@media(min-width:560px){.row2{grid-template-columns:1fr 1fr}}
+.seg-group{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);margin-top:6px}
+.seg{position:relative;display:block}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:flex;flex-direction:column;align-items:center;border:1.5px solid #dccdb0;border-radius:14px;padding:10px 4px;background:#fffdf7;line-height:1.4;text-align:center}
+.seg b{font-weight:600}
+.seg i{font:700 1.1rem var(--display);font-style:normal;color:var(--accent-dark)}
+.seg input:checked+span{border-color:var(--accent);background:#f8e4dc;box-shadow:0 0 0 2px var(--accent) inset}
+.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:.93rem}
+.check input{width:20px;height:20px;margin-top:4px;accent-color:var(--accent);flex:none}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.actions .btn{flex:1 1 150px}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;background:#fbe6e0;color:#7a3434;font-size:.92rem;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.ok{background:#e8f1e3;color:#2f5a2b}
+.out{width:100%;min-height:150px;margin-top:6px;border:1.5px dashed #d2bf9c;border-radius:12px;padding:12px;background:#fffdf7;line-height:1.65;font-size:.9rem}
+.part{margin-top:16px}
+.part .btn{margin-top:8px;width:100%}
+.steps-next{margin:12px 0 0;padding-left:1.3em;color:var(--muted);font-size:.93rem}
+
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:16px 36px 16px 0;font-weight:600;position:relative}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";position:absolute;right:6px;top:12px;font-size:1.5rem;color:var(--accent);transition:transform .2s}
+details[open] summary:after{transform:rotate(45deg)}
+details p{padding:0 0 18px;color:var(--muted);max-width:42em}
+
+footer{padding:40px 0 48px;color:var(--muted);font-size:.9rem}
+footer .logo{margin-bottom:8px}
+footer a{color:var(--accent-dark);font-weight:500}
+
+.card-stage{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 16px 24px}
+.card-promo{text-align:center;margin-top:22px;font-size:.88rem;color:var(--muted)}
+.card-promo a{color:var(--accent-dark);font-weight:600}
+
+.studio{padding:28px 0 60px}
+.studio h1{font-size:1.8rem}
+.studio .panel{margin-top:20px}
+.studio h2{font-size:1.25rem;padding:0}
+.studio .grid{display:grid;gap:28px}
+@media(min-width:900px){.studio .grid{grid-template-columns:1fr 1fr;align-items:start}.studio .panel{max-width:none}}
+.tag{display:inline-block;background:var(--ink);color:#fff;border-radius:999px;padding:2px 12px;font:500 .78rem var(--sans);vertical-align:middle}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- ลายเส้นการ์ตูนมินิมอล (ใช้ซ้ำด้วย <use>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="d-heart" viewBox="0 0 48 48"><path style="fill:var(--f,#f2b5ad);stroke:#4a3c31;stroke-width:2.4;stroke-linejoin:round" d="M24 41C11 31 6 24 6 17.5 6 11.5 10.5 8 15 8c3.800 0 7 2.200 9 5.600C26 10.200 29.200 8 33 8c4.500 0 9 3.500 9 9.500C42 24 37 31 24 41z"/></symbol>
+  <symbol id="d-star" viewBox="0 0 48 48"><path style="fill:var(--f,#f6dc8e);stroke:#4a3c31;stroke-width:2.4;stroke-linejoin:round" d="M24 6l5.200 11 12 1.600-8.800 8.300 2.200 11.900L24 33l-10.600 5.800 2.200-11.900L6.800 18.600 18.800 17z"/></symbol>
+  <symbol id="d-sparkle" viewBox="0 0 48 48"><path style="fill:var(--f,#f6dc8e);stroke:#4a3c31;stroke-width:2.4;stroke-linejoin:round" d="M24 5c1.500 10 4.500 15.500 19 19-14.500 3.500-17.500 9-19 19-1.500-10-4.500-15.500-19-19C19.500 20.500 22.500 15 24 5z"/></symbol>
+  <symbol id="d-cloud" viewBox="0 0 48 48">
+    <g style="fill:#4a3c31;stroke:#4a3c31;stroke-width:4.4;stroke-linejoin:round"><circle cx="15" cy="29" r="8"/><circle cx="26" cy="21" r="11"/><circle cx="36" cy="28" r="9"/><rect x="15" y="28" width="21" height="9"/></g>
+    <g style="fill:var(--f,#fffbf2)"><circle cx="15" cy="29" r="8"/><circle cx="26" cy="21" r="11"/><circle cx="36" cy="28" r="9"/><rect x="15" y="28" width="21" height="9"/></g>
+  </symbol>
+  <symbol id="d-flower" viewBox="0 0 48 48">
+    <g style="fill:#4a3c31;stroke:#4a3c31;stroke-width:4.4"><circle cx="24" cy="11" r="7.500"/><circle cx="35.500" cy="19.500" r="7.500"/><circle cx="31" cy="33" r="7.500"/><circle cx="17" cy="33" r="7.500"/><circle cx="12.500" cy="19.500" r="7.500"/></g>
+    <g style="fill:var(--f,#f2b5ad)"><circle cx="24" cy="11" r="7.500"/><circle cx="35.500" cy="19.500" r="7.500"/><circle cx="31" cy="33" r="7.500"/><circle cx="17" cy="33" r="7.500"/><circle cx="12.500" cy="19.500" r="7.500"/></g>
+    <circle cx="24" cy="24" r="6" style="fill:#f6dc8e;stroke:#4a3c31;stroke-width:2"/>
+  </symbol>
+  <symbol id="d-sprout" viewBox="0 0 48 48"><g style="fill:#b5c9aa;stroke:#4a3c31;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round"><path d="M24 42V25" fill="none"/><path d="M24 29c-9 0-13-5-13-12 9 0 13 5 13 12z"/><path d="M24 25c0-8 4-12 13-12 0 8-4 12-13 12z"/></g></symbol>
+  <symbol id="d-cake" viewBox="0 0 48 48"><g style="stroke:#4a3c31;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round"><rect x="8" y="24" width="32" height="16" rx="4" style="fill:#f2b5ad"/><rect x="8" y="24" width="32" height="7" rx="3.500" style="fill:#fffbf2"/><path d="M24 16v8" fill="none"/><path d="M24 8c2 2.500 2.500 4.500 0 6.500-2.500-2-2-4 0-6.500z" style="fill:#f6dc8e"/></g></symbol>
+</defs></svg>
+
+<!-- ================= หน้าเว็บขายของ ================= -->
+<div id="viewSite">
+  <header class="topbar"><div class="wrap">
+    <a class="logo" href="#" data-go="top"><svg class="dd"><use href="#d-heart"/></svg>Little Letter</a>
+    <a class="btn sm" href="#order" data-go="order">สั่งทำการ์ด</a>
+  </div></header>
+
+  <main id="top">
+    <div class="wrap hero">
+      <svg class="dd hero-dd a" aria-hidden="true"><use href="#d-star"/></svg>
+      <svg class="dd hero-dd b" aria-hidden="true"><use href="#d-sparkle" style="--f:#f2b5ad"/></svg>
+      <div>
+        <h1>เขียนจดหมายถึงคนพิเศษ แล้วให้เขาแกะซองเปิดอ่านเอง</h1>
+        <p class="lead">Little Letter ทำการ์ดซองจดหมายจากข้อความ รูป และเพลงของคุณ เปิดซองแล้วมีแอนิเมชันน่ารัก ๆ ตามโอกาส เช่น เป่าเค้กวันเกิด หรือหัวใจที่เต้นตอนบอกรัก ส่งเป็นลิงก์เดียว ไม่ต้องติดตั้งแอป</p>
+        <div class="cta">
+          <a class="btn" href="#order" data-go="order">สั่งทำการ์ดของคุณ</a>
+          <a class="link" href="#occasions" data-go="occasions">ดูตัวอย่างตามโอกาส</a>
+        </div>
+        <p class="fine" id="heroFine"></p>
+      </div>
+      <div id="demo">
+        <p class="demo-note"><svg class="dd" aria-hidden="true"><use href="#d-sparkle"/></svg>ลองแตะซองดูก่อนได้เลย<svg class="dd" aria-hidden="true"><use href="#d-heart"/></svg></p>
+        <div id="demoRoot"></div>
+      </div>
+    </div>
+
+    <section class="band" id="how"><div class="wrap">
+      <div class="sec-head"><h2>สั่งง่าย ๆ ในสามขั้น</h2><svg class="dd lg" aria-hidden="true"><use href="#d-sprout"/></svg></div>
+      <ol class="steps">
+        <li><span class="n">1</span><div><h3>เล่าให้เราฟัง</h3><p>กรอกชื่อผู้รับ ข้อความที่อยากบอก และโอกาสที่จะส่ง ไม่รู้จะเขียนอะไร ให้เราช่วยเรียบเรียงได้</p></div></li>
+        <li><span class="n">2</span><div><h3>เราทำการ์ดให้</h3><p>ชำระเงินผ่านแชต แล้วเราจะทำการ์ดและส่งให้ลองเปิดดูก่อนส่งจริง</p></div></li>
+        <li><span class="n">3</span><div><h3>ส่งลิงก์ให้คนพิเศษ</h3><p>คุณจะได้ลิงก์เดียว ส่งทาง IG, LINE หรือข้อความได้เลย ผู้รับแตะซองเพื่ออ่าน</p></div></li>
+      </ol>
+    </div></section>
+
+    <section class="band paper" id="occasions"><div class="wrap">
+      <div class="sec-head"><h2>ส่งในโอกาสไหนดี</h2><p>แตะโอกาสเพื่อดูแอนิเมชันในซองด้านบน</p><svg class="dd lg" aria-hidden="true"><use href="#d-cake"/></svg></div>
+      <div class="chips" id="occChips" role="group" aria-label="เลือกโอกาส"></div>
+    </div></section>
+
+    <section class="band" id="pricing"><div class="wrap">
+      <div class="sec-head"><h2>เลือกแบบที่ใช่</h2><p>ราคาต่อการ์ดหนึ่งใบ ชำระครั้งเดียว</p><svg class="dd lg" aria-hidden="true"><use href="#d-flower"/></svg></div>
+      <ul class="price-list" id="priceList"></ul>
+    </div></section>
+
+    <section class="band paper" id="order"><div class="wrap">
+      <div class="sec-head"><h2>บอกรายละเอียดการ์ดของคุณ</h2><p>กรอกแล้วกดสร้างออเดอร์ ระบบจะรวมข้อมูลเป็นข้อความ ให้คุณนำไปส่งในแชต Instagram ของร้านได้เลย ยังไม่มีการตัดเงินในขั้นนี้</p><svg class="dd lg" aria-hidden="true"><use href="#d-heart"/></svg></div>
+      <form class="panel" id="orderForm" novalidate>
+        <div class="field"><span>แพ็กเกจ</span><div class="seg-group" id="pkgGroup" role="radiogroup" aria-label="แพ็กเกจ"></div></div>
+        <label class="field"><span>โอกาส</span><select id="oOcc"></select></label>
+        <div class="row2">
+          <label class="field"><span>ชื่อผู้รับ</span><input type="text" id="oTo" maxlength="60" placeholder="เช่น มิน" autocomplete="off"></label>
+          <label class="field"><span>ชื่อผู้ส่ง</span><input type="text" id="oFrom" maxlength="60" placeholder="เช่น บีม" autocomplete="off"></label>
+        </div>
+        <label class="field"><span>หัวข้อจดหมาย</span><input type="text" id="oTitle" maxlength="90"></label>
+        <label class="field"><span>ข้อความในจดหมาย</span><textarea id="oBody" maxlength="1800"></textarea><small>แก้ข้อความตัวอย่างให้เป็นของคุณได้เลย</small></label>
+        <label class="check"><input type="checkbox" id="oHelp"><span>ไม่รู้จะเขียนอะไร ให้ร้านช่วยเรียบเรียงจากเรื่องที่ฉันเล่า</span></label>
+        <label class="field"><span>ข้อความปิดท้าย</span><input type="text" id="oEnd" maxlength="160"></label>
+        <label class="field"><span>รูปและเพลงที่อยากใส่ (ถ้ามี)</span><input type="text" id="oExtra" maxlength="200" placeholder="เช่น จะส่งรูปให้ทางแชต / เพลง ... ของ ..."><small>รูปและเพลงใช้ได้ตั้งแต่แพ็กเกจ Classic</small></label>
+        <label class="field"><span>ต้องการให้การ์ดพร้อมวันไหน</span><input type="text" id="oWhen" maxlength="100" placeholder="เช่น ก่อนวันที่ 14 ก.พ. เวลา 18:00"></label>
+        <label class="field"><span>ชื่อ IG ของคุณ (ถ้ามี)</span><input type="text" id="oContact" maxlength="100" placeholder="เช่น @yourname" autocomplete="off"></label>
+        <div class="actions"><button class="btn" type="submit">สร้างออเดอร์</button></div>
+        <div class="msg" id="orderMsg" role="alert" hidden></div>
+      </form>
+
+      <div class="panel" id="orderResult" hidden style="margin-top:20px">
+        <h3 style="font:600 1.15rem var(--display)">ออเดอร์ของคุณพร้อมส่งแล้ว</h3>
+        <ol class="steps-next">
+          <li>กดคัดลอกข้อความด้านล่าง</li>
+          <li>กดเปิด Instagram ร้าน แล้ววางข้อความในแชต</li>
+          <li>รอร้านส่งยอดและ QR ในแชต เมื่อโอนแล้วเราเริ่มทำให้ทันที</li>
+        </ol>
+        <p class="hint-s" id="partsNote" hidden>ข้อความยาวเกินที่ Instagram ส่งได้ในครั้งเดียว จึงแบ่งเป็นหลายส่วน ให้ส่งตามลำดับทีละส่วน</p>
+        <div id="orderParts"></div>
+        <div class="actions"><a class="btn ghost" id="openChat" target="_blank" rel="noopener">เปิด Instagram ร้าน</a></div>
+        <div class="msg ok" id="copyMsg" hidden></div>
+      </div>
+    </div></section>
+
+    <section class="band" id="faq"><div class="wrap">
+      <div class="sec-head"><h2>คำถามที่พบบ่อย</h2><svg class="dd lg" aria-hidden="true"><use href="#d-cloud"/></svg></div>
+      <div style="max-width:720px" id="faqList"></div>
+    </div></section>
+  </main>
+
+  <footer><div class="wrap">
+    <a class="logo" href="#" data-go="top"><svg class="dd"><use href="#d-heart"/></svg>Little Letter</a>
+    <p>การ์ดซองจดหมายสำหรับความรู้สึกที่พูดไม่หมด</p>
+    <p style="margin-top:10px">ติดต่อร้านทาง Instagram <a id="footContact" target="_blank" rel="noopener"></a></p>
+  </div></footer>
+</div>
+
+<!-- ================= หน้าการ์ดที่ผู้รับเปิดอ่าน ================= -->
+<div id="viewCard" hidden>
+  <div class="card-stage">
+    <div id="cardRoot"></div>
+    <p class="card-promo">อยากส่งการ์ดแบบนี้ให้ใครสักคน <a id="promoLink" href="#">สั่งทำที่ Little Letter</a></p>
+  </div>
+</div>
+
+<!-- ================= Studio สำหรับเจ้าของร้าน (เปิดด้วย #studio) ================= -->
+<div id="viewStudio" hidden>
+  <div class="wrap studio">
+    <h1>Studio <span class="tag">เฉพาะเจ้าของร้าน</span></h1>
+    <p class="hint-s" style="font-size:.95rem">นำออเดอร์ของลูกค้ามาสร้างลิงก์การ์ด ตรวจตัวอย่าง แล้วคัดลอกข้อความส่งมอบ</p>
+    <div class="msg" id="studioFile" hidden>คุณเปิดไฟล์จากเครื่องโดยตรง ลิงก์ที่สร้างจะใช้ได้เฉพาะบนเครื่องนี้ ให้อัปโหลดเว็บขึ้นโฮสต์ก่อน ลิงก์ถึงจะเปิดได้บนมือถือลูกค้า</div>
+    <div class="grid">
+      <div>
+        <div class="panel">
+          <h2>1. นำเข้าออเดอร์</h2>
+          <label class="field"><span>วางข้อความออเดอร์ที่ลูกค้าส่งมา (ถ้าแบ่งหลายส่วน วางต่อกันได้เลย)</span><textarea id="sImport" style="min-height:100px" placeholder="วางข้อความออเดอร์จากแชตที่นี่"></textarea></label>
+          <div class="actions"><button class="btn plain" type="button" id="sImportBtn">นำเข้า</button></div>
+        </div>
+        <div class="panel">
+          <h2>2. ตรวจและแก้ข้อมูลการ์ด</h2>
+          <label class="field"><span>โอกาส (กำหนดแอนิเมชันตอนเปิดซอง)</span><select id="sOcc"></select></label>
+          <div class="row2">
+            <label class="field"><span>ชื่อผู้รับ</span><input type="text" id="sTo" maxlength="60"></label>
+            <label class="field"><span>ชื่อผู้ส่ง</span><input type="text" id="sFrom" maxlength="60"></label>
+          </div>
+          <label class="field"><span>หัวข้อจดหมาย</span><input type="text" id="sTitle" maxlength="90"></label>
+          <label class="field"><span>ข้อความในจดหมาย</span><textarea id="sBody" maxlength="1800"></textarea></label>
+          <label class="field"><span>ข้อความปิดท้าย</span><input type="text" id="sEnd" maxlength="160"></label>
+          <label class="field"><span>ลิงก์รูปภาพ (ไม่บังคับ)</span><input type="url" id="sPhoto" placeholder="https://.../photo.jpg"><small>ต้องเป็นลิงก์ตรงไปยังไฟล์รูปที่เปิดดูได้ เช่น รูปที่อัปโหลดไว้ในโฮสต์ของคุณ</small></label>
+          <label class="field"><span>ลิงก์เพลงหรือไฟล์เสียง (ไม่บังคับ)</span><input type="url" id="sMusic" placeholder="https://.../song.mp3"><small>ต้องเป็นลิงก์ตรงไปยังไฟล์เสียงที่คุณมีสิทธิ์ใช้ ไม่ใช่ลิงก์หน้า YouTube หรือ Spotify</small></label>
+          <div class="actions">
+            <button class="btn ghost" type="button" id="sPreviewBtn">ดูตัวอย่าง</button>
+            <button class="btn" type="button" id="sMakeBtn">สร้างลิงก์การ์ด</button>
+          </div>
+          <div class="msg" id="sMsg" role="alert" hidden></div>
+        </div>
+        <div class="panel" id="sOut" hidden>
+          <h2>3. ส่งมอบให้ลูกค้า</h2>
+          <label class="field"><span>ลิงก์การ์ด</span><input type="text" id="sLink" readonly></label>
+          <label class="field"><span>ข้อความส่งมอบ</span><textarea id="sDeliver" style="min-height:170px"></textarea></label>
+          <div class="actions">
+            <button class="btn" type="button" id="sCopyDeliver">คัดลอกข้อความส่งมอบ</button>
+            <button class="btn ghost" type="button" id="sCopyLink">คัดลอกเฉพาะลิงก์</button>
+            <button class="btn ghost" type="button" id="sShare">แชร์</button>
+          </div>
+          <div class="msg ok" id="sCopyMsg" hidden></div>
+        </div>
+      </div>
+      <div>
+        <p class="demo-note">ตัวอย่างที่ผู้รับจะเห็น</p>
+        <div id="sPreviewRoot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id);
+const reduced=matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+/* ============================================================
+   ตั้งค่าร้าน: ราคา ช่องทางติดต่อ และระยะเวลาทำงาน
+   ============================================================ */
+const CONFIG={
+  contactLabel:"Instagram",
+  contactHandle:"@littlelettercardsp_",
+  contactUrl:"https://ig.me/m/littlelettercardsp_",          // เปิดแชต IG ของร้านโดยตรง
+  profileUrl:"https://www.instagram.com/littlelettercardsp_/",
+  leadTime:"ภายใน 24 ชั่วโมง",                               // ปรับให้ตรงกับที่ทำได้จริง
+  packages:[
+    {id:"mini",name:"Mini",price:49,sub:"ข้อความอย่างเดียว",feats:["ซองจดหมายแอนิเมชันตามโอกาส","ข้อความของคุณ","ลิงก์เฉพาะการ์ดใบนี้"]},
+    {id:"classic",name:"Classic",price:99,sub:"ใส่รูปและเพลงได้",badge:"ขายดี",def:true,feats:["ทุกอย่างใน Mini","รูปภาพ 1 รูป","เพลง 1 เพลง"]},
+    {id:"premium",name:"Premium",price:179,sub:"ให้เราช่วยเขียนให้",feats:["ทุกอย่างใน Classic","ช่วยเรียบเรียงข้อความให้ลื่นไหล","ส่งลิงก์ให้คุณตรงวันเวลาที่ระบุ"]}
+  ]
+};
+
+const GL={heart:["♡","♥"],star:["✧","★"],flower:["❀","✿"],mix:["♡","♥","✧","❀"]};
+const OCC={
+  birthday:{label:"วันเกิด",icon:"d-cake",glyphs:null,title:"สุขสันต์วันเกิดนะ ♡",body:"สุขสันต์วันเกิดนะ ปีนี้ขอให้เธอมีแต่เรื่องดี ๆ เข้ามา\nขอบคุณที่เกิดมาให้เราได้เจอกัน\nขอให้ทุกความฝันเป็นจริง และเราจะเป็นกำลังใจอยู่ข้าง ๆ เสมอ",end:"ขอให้วันนี้เป็นวันที่ยิ้มได้ทั้งวันนะ ♡"},
+  confess:{label:"บอกรัก",icon:"d-heart",glyphs:GL.heart,title:"มีบางอย่างอยากบอก ♡",body:"มีบางอย่างที่อยากบอกมานานแล้ว\nเวลาอยู่กับเธอ เราสบายใจและมีความสุขที่สุด\nเราชอบเธอนะ ไม่ใช่แค่เพื่อนเลย",end:"ไม่ต้องรีบตอบก็ได้ เราจะรอ ♡"},
+  sorry:{label:"ง้อ ขอโทษ",icon:"d-cloud",glyphs:null,title:"ขอโทษนะ ♡",body:"เราขอโทษนะ ที่ทำให้เธอเสียใจ\nเรารู้ว่าคำพูดอย่างเดียวคงไม่พอ แต่เราตั้งใจจะทำให้ดีขึ้นจริง ๆ\nขอโอกาสให้เราอีกสักครั้งได้ไหม",end:"เราอยู่ตรงนี้เสมอนะ ♡"},
+  anniversary:{label:"ครบรอบ",icon:"d-sparkle",glyphs:GL.heart,title:"ครบรอบของเรา ♡",body:"ขอบคุณที่อยู่ด้วยกันมาจนถึงวันนี้\nทุกวันกับเธอคือความทรงจำดี ๆ ที่เราอยากเก็บไว้\nปีต่อไปก็ขอเดินไปด้วยกันอีกนะ",end:"รักเธอเหมือนวันแรกเลย ♡"},
+  thanks:{label:"ขอบคุณ",icon:"d-flower",glyphs:GL.flower,title:"ขอบคุณสำหรับทุกอย่าง ♡",body:"ขอบคุณสำหรับทุกอย่างที่ผ่านมา\nขอบคุณที่ดูแลและอยู่ข้างกันเสมอ\nวันนี้อยากบอกว่า เราซาบซึ้งใจมากจริง ๆ",end:"ขอบคุณจากใจนะ ♡"},
+  cheer:{label:"ให้กำลังใจ",icon:"d-star",glyphs:GL.star,title:"ส่งกำลังใจให้เธอ ♡",body:"ช่วงนี้อาจจะเหนื่อยมาก แต่เธอเก่งมากแล้วนะ\nพักได้เสมอ เราอยู่ตรงนี้\nไม่ว่าจะเป็นยังไง เราเชื่อในตัวเธอ",end:"สู้ ๆ นะ เราเป็นกำลังใจให้ ♡"}
+};
+const glyphsOf=occ=>occ in OCC?OCC[occ].glyphs:GL.mix;
+
+const DEFAULTS={to:"",from:"",occ:"other",title:"ถึงคนพิเศษของเรา ♡",body:"ขอบคุณที่เข้ามาเป็นรอยยิ้มในทุก ๆ วันนะ\nไม่ว่าจะเจออะไร เราก็อยากมีเธออยู่ข้าง ๆ\nขอให้เธอรู้ไว้ว่ามีคนคนหนึ่งคิดถึงเธอเสมอเลย",end:"เธอคือความพิเศษของเราเสมอ ♡",photo:"",music:""};
+
+const FAQ=[
+  ["ผู้รับเปิดการ์ดยังไง","กดลิงก์ที่ได้รับบนมือถือหรือคอมพิวเตอร์ แล้วแตะที่ซองจดหมาย ไม่ต้องติดตั้งแอปและไม่ต้องสมัครสมาชิก"],
+  ["แอนิเมชันตอนเปิดซองต่างกันยังไง","เปลี่ยนตามโอกาสที่คุณเลือก เช่น วันเกิดมีเค้กให้เป่าเทียน บอกรักมีหัวใจเต้น ง้อมีเมฆฝนที่แตะแล้วฟ้าใส ครบรอบมีหัวใจสองดวงมาเจอกัน ขอบคุณมีดอกไม้บาน และให้กำลังใจมีรุ้งกินน้ำ"],
+  ["สั่งแล้วได้การ์ดเมื่อไหร่","ปกติ"+CONFIG.leadTime+"หลังชำระเงินและส่งข้อมูลครบ หากต้องการการ์ดวันใดวันหนึ่งโดยเฉพาะ ให้ระบุไว้ในออเดอร์"],
+  ["ชำระเงินยังไง","หลังคุณส่งออเดอร์ในแชต ร้านจะส่งยอดและ QR สำหรับโอนผ่านพร้อมเพย์ให้ในแชต เมื่อโอนแล้วร้านเริ่มทำการ์ดทันที"],
+  ["แก้ไขข้อความได้ไหม","ร้านจะส่งการ์ดให้ลองเปิดดูก่อนส่งจริง ปรับคำผิดหรือแก้ข้อความเล็กน้อยได้โดยไม่เสียเพิ่ม"],
+  ["การ์ดมีวันหมดอายุไหม","ไม่มี ลิงก์เปิดได้ตลอดตราบใดที่เว็บของร้านยังออนไลน์"],
+  ["ข้อความของฉันปลอดภัยไหม","ข้อความอยู่ในลิงก์การ์ดโดยตรง ร้านไม่ได้เก็บไว้ในฐานข้อมูล ใครมีลิงก์ก็เปิดอ่านได้ จึงควรส่งลิงก์ให้เฉพาะผู้รับ"]
+];
+
+/* ---------- ฟังก์ชันพื้นฐาน ---------- */
+const base=()=>location.href.split("#")[0];
+const b64u=bytes=>{let s="";bytes.forEach(b=>s+=String.fromCharCode(b));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")};
+const unb64u=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+const pipe=async(bytes,stream)=>new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+async function encode(obj){
+  const raw=new TextEncoder().encode(JSON.stringify(obj));
+  if(window.CompressionStream){try{const z=await pipe(raw,new CompressionStream("deflate-raw"));if(z.length<raw.length)return"z"+b64u(z)}catch(e){}}
+  return"p"+b64u(raw);
+}
+async function decode(s){
+  let bytes;
+  if(s[0]==="z")bytes=await pipe(unb64u(s.slice(1)),new DecompressionStream("deflate-raw"));
+  else if(s[0]==="p")bytes=unb64u(s.slice(1));
+  else bytes=unb64u(s);
+  const o=JSON.parse(new TextDecoder().decode(bytes));
+  if(!o||typeof o!=="object")throw Error("bad");
+  return o;
+}
+function safeUrl(s,label){
+  s=(s||"").trim();if(!s)return"";
+  let u;try{u=new URL(s)}catch(e){throw Error(label+": ลิงก์ไม่ถูกต้อง ต้องขึ้นต้นด้วย https://")}
+  if(!/^https?:$/.test(u.protocol))throw Error(label+": ต้องเป็นลิงก์ http:// หรือ https://");
+  return u.href;
+}
+async function copyText(text,el){
+  try{await navigator.clipboard.writeText(text);return true}catch(e){}
+  try{if(el){el.focus();el.select();return document.execCommand("copy")}}catch(e){}
+  return false;
+}
+function show(el,text,ok){el.textContent=text;el.hidden=false;el.classList.toggle("ok",!!ok)}
+const occOptions=()=>Object.entries(OCC).map(([k,o])=>`<option value="${k}">${o.label}</option>`).join("")+`<option value="other">อื่น ๆ</option>`;
+
+/* ---------- เอฟเฟกต์ลอยบนหน้าจอ ---------- */
+function heart(glyphs){
+  const g=glyphs||GL.mix,e=document.createElement("span");e.className="heart";e.setAttribute("aria-hidden","true");
+  e.textContent=g[Math.floor(Math.random()*g.length)];
+  e.style.left=Math.random()*100+"vw";e.style.fontSize=17+Math.random()*20+"px";e.style.animationDuration=4+Math.random()*4+"s";
+  document.body.appendChild(e);setTimeout(()=>e.remove(),8500);
+}
+function burst(n,gap,glyphs){if(reduced)return;for(let i=0;i<n;i++)setTimeout(()=>heart(glyphs),i*gap)}
+function confetti(n){
+  if(reduced)return;
+  const cols=["#f2b5ad","#f6dc8e","#bfd8e3","#b5c9aa","#d9b8e0"];
+  for(let i=0;i<n;i++){
+    const e=document.createElement("i");e.className="confetti";e.setAttribute("aria-hidden","true");
+    e.style.left=Math.random()*100+"vw";e.style.background=cols[i%cols.length];
+    e.style.animationDuration=2.4+Math.random()*2.2+"s";e.style.animationDelay=Math.random()*.4+"s";
+    e.style.setProperty("--r",Math.round(Math.random()*720-360)+"deg");
+    document.body.appendChild(e);setTimeout(()=>e.remove(),5600);
+  }
+}
+
+/* ---------- ฉากแอนิเมชันตามโอกาส ---------- */
+const INK='stroke="#4a3c31" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"';
+const CANDLES=[92.5,120.5,148.5];
+const FX={
+  birthday:{label:"เป่าเทียนบนเค้ก",cap:"แตะที่เค้กเพื่อเป่าเทียน",done:"ขอให้ทุกคำอธิษฐานเป็นจริงนะ ♡",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<ellipse cx="120" cy="173" rx="98" ry="10" fill="#e6d3b6"/>
+<g ${INK}>
+<rect x="52" y="108" width="136" height="64" rx="12" fill="#f2b5ad"/>
+<rect x="52" y="108" width="136" height="22" rx="11" fill="#fffbf2"/>
+<rect x="88" y="82" width="9" height="26" rx="2" fill="#f6dc8e"/>
+<rect x="116" y="82" width="9" height="26" rx="2" fill="#bfd8e3"/>
+<rect x="144" y="82" width="9" height="26" rx="2" fill="#b5c9aa"/>
+<path d="M70 148h12M104 154h12M138 146h12M164 154h12" fill="none"/>
+</g>
+${CANDLES.map(x=>`<g transform="translate(${x},80)"><path class="flame" d="M0-16c5 6 6 11 0 16-6-5-5-10 0-16z" fill="#f7b64d"/></g>`).join("")}
+${CANDLES.map((x,i)=>`<circle class="smoke s${i+1}" cx="${x}" cy="66" r="4" fill="#d8cfc3"/>`).join("")}
+</svg>`,
+    tap(st,cap,f){if(st.classList.contains("blown"))return;st.classList.add("blown");cap.textContent=f.done;confetti(52)}},
+
+  confess:{label:"ส่งความรัก",cap:"แตะหัวใจเพื่อส่งความรัก",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<use class="tw" href="#d-sparkle" x="26" y="36" width="24" height="24" style="--f:#f6dc8e"/>
+<use class="tw" href="#d-sparkle" x="190" y="60" width="20" height="20" style="--f:#f6dc8e;animation-delay:.6s"/>
+<use class="fh" href="#d-heart" x="46" y="70" width="22" height="22" style="animation-delay:.2s"/>
+<use class="fh" href="#d-heart" x="176" y="86" width="22" height="22" style="animation-delay:1.1s"/>
+<use class="fh" href="#d-heart" x="196" y="40" width="16" height="16" style="animation-delay:2s"/>
+<use class="fh" href="#d-heart" x="30" y="30" width="16" height="16" style="animation-delay:1.6s"/>
+<g class="beat"><use href="#d-heart" x="56" y="32" width="128" height="128" style="--f:#f2a7ad"/>
+<circle cx="103" cy="86" r="3.2" fill="#4a3c31"/><circle cx="137" cy="86" r="3.2" fill="#4a3c31"/>
+<path d="M111 97q9 8 18 0" fill="none" ${INK}/>
+<ellipse cx="92" cy="97" rx="7" ry="4" fill="#e98a93" opacity=".6"/><ellipse cx="148" cy="97" rx="7" ry="4" fill="#e98a93" opacity=".6"/></g>
+</svg>`,
+    tap(){burst(18,90,GL.heart)}},
+
+  sorry:{label:"ทำให้ฟ้าใส",cap:"แตะเมฆเพื่อให้ฟ้าใส",done:"ฟ้าใสแล้ว เราขอโทษจริง ๆ นะ ♡",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<g class="sun-g">
+<g class="rays" ${INK}>${Array.from({length:8},(_,i)=>{const a=i*Math.PI/4,s=Math.sin(a),c=Math.cos(a);return`<path d="M${(120+35*s).toFixed(1)} ${(88-35*c).toFixed(1)}L${(120+45*s).toFixed(1)} ${(88-45*c).toFixed(1)}" fill="none"/>`}).join("")}</g>
+<circle cx="120" cy="88" r="27" fill="#f6dc8e" ${INK}/>
+<circle cx="111" cy="84" r="2.8" fill="#4a3c31"/><circle cx="129" cy="84" r="2.8" fill="#4a3c31"/>
+<path d="M111 95q9 8 18 0" fill="none" ${INK}/>
+<ellipse cx="102" cy="94" rx="5" ry="3" fill="#f2a7ad" opacity=".7"/><ellipse cx="138" cy="94" rx="5" ry="3" fill="#f2a7ad" opacity=".7"/>
+</g>
+<g class="cloud-g">
+<use href="#d-cloud" x="46" y="16" width="148" height="148" style="--f:#e4ddd0"/>
+<circle cx="106" cy="84" r="3" fill="#4a3c31"/><circle cx="136" cy="84" r="3" fill="#4a3c31"/>
+<path d="M111 100q10-8 20 0" fill="none" ${INK}/>
+<path d="M104 90q-2 5 0 7" fill="none" stroke="#bfd8e3" stroke-width="3" stroke-linecap="round"/>
+${[84,108,132,156].map((x,i)=>`<path class="drop" d="M${x} 134c3 4 4 7 0 9-4-2-3-5 0-9z" fill="#9fc4d6" style="animation-delay:${i*.25}s"/>`).join("")}
+</g>
+</svg>`,
+    tap(st,cap,f){if(st.classList.contains("cleared"))return;st.classList.add("cleared");cap.textContent=f.done;burst(8,140,GL.star)}},
+
+  anniversary:{label:"ดูหัวใจสองดวงอีกครั้ง",cap:"แตะเพื่อดูอีกครั้ง",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<g class="pair">
+<g class="meet-l"><use href="#d-heart" x="40" y="46" width="88" height="88" style="--f:#f2b5ad"/></g>
+<g class="meet-r"><use href="#d-heart" x="112" y="46" width="88" height="88" style="--f:#f6dc8e"/></g>
+</g>
+<use class="pop tw" href="#d-sparkle" x="104" y="12" width="32" height="32" style="--f:#fffbf2;animation-delay:1.4s,1.4s"/>
+<use class="pop" href="#d-star" x="30" y="30" width="22" height="22" style="animation-delay:1.6s"/>
+<use class="pop" href="#d-star" x="188" y="34" width="22" height="22" style="--f:#f2b5ad;animation-delay:1.75s"/>
+<use class="pop" href="#d-sparkle" x="186" y="124" width="20" height="20" style="--f:#bfd8e3;animation-delay:1.9s"/>
+</svg>`,
+    init(st){const r=st.querySelector(".meet-r");if(r)r.addEventListener("animationend",()=>burst(10,90,GL.heart),{once:true})},
+    tap(st){mountFx(st,"anniversary")}},
+
+  thanks:{label:"ทำให้ดอกไม้โบกไหว",cap:"แตะเพื่อโปรยกลีบดอกไม้",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<path class="stem" pathLength="1" d="M120 150C118 120 90 108 70 82"/>
+<path class="stem" pathLength="1" d="M120 150V58" style="animation-delay:.2s"/>
+<path class="stem" pathLength="1" d="M120 150C122 124 150 110 170 86" style="animation-delay:.4s"/>
+<path class="pop" d="M120 122c-16-2-24-10-26-20 14 0 24 6 26 20z" fill="#b5c9aa" ${INK} style="animation-delay:.7s"/>
+<path class="pop" d="M120 110c16-2 24-10 26-20-14 0-24 6-26 20z" fill="#b5c9aa" ${INK} style="animation-delay:.8s"/>
+<g class="sw"><use class="pop" href="#d-flower" x="42" y="54" width="56" height="56" style="--f:#f2b5ad;animation-delay:.9s"/></g>
+<g class="sw"><use class="pop" href="#d-flower" x="90" y="26" width="60" height="60" style="--f:#f6dc8e;animation-delay:1.2s"/></g>
+<g class="sw"><use class="pop" href="#d-flower" x="142" y="58" width="56" height="56" style="--f:#bfd8e3;animation-delay:1.5s"/></g>
+<path d="M90 148h60l-7 30h-46z" fill="#e2c8a4" ${INK}/>
+<ellipse cx="120" cy="148" rx="30" ry="5" fill="#c9a97f" ${INK}/>
+</svg>`,
+    tap(st){st.classList.remove("sway");void st.offsetWidth;st.classList.add("sway");burst(16,100,GL.flower)}},
+
+  cheer:{label:"รับกำลังใจ",cap:"แตะเพื่อรับกำลังใจ",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<path class="arc" pathLength="1" d="M42 150a78 78 0 0 1 156 0" stroke="#f2b5ad" stroke-width="12"/>
+<path class="arc" pathLength="1" d="M54 150a66 66 0 0 1 132 0" stroke="#f6dc8e" stroke-width="12" style="animation-delay:.35s"/>
+<path class="arc" pathLength="1" d="M66 150a54 54 0 0 1 108 0" stroke="#bfd8e3" stroke-width="12" style="animation-delay:.7s"/>
+<use class="pop" href="#d-cloud" x="6" y="112" width="72" height="72" style="animation-delay:1.1s"/>
+<use class="pop" href="#d-cloud" x="162" y="112" width="72" height="72" style="animation-delay:1.25s"/>
+<use class="tw" href="#d-star" x="104" y="14" width="30" height="30" style="--f:#f6dc8e"/>
+<use class="tw" href="#d-sparkle" x="30" y="40" width="20" height="20" style="--f:#f2b5ad;animation-delay:.5s"/>
+<use class="tw" href="#d-sparkle" x="192" y="44" width="20" height="20" style="--f:#bfd8e3;animation-delay:1s"/>
+</svg>`,
+    tap(){burst(20,90,GL.star)}},
+
+  other:{label:"ส่งความรัก",cap:"แตะหัวใจเพื่อส่งความรัก",
+    svg:`<svg viewBox="0 0 240 190" aria-hidden="true">
+<use class="tw" href="#d-sparkle" x="36" y="40" width="26" height="26" style="--f:#f2b5ad"/>
+<use class="tw" href="#d-star" x="184" y="36" width="26" height="26" style="animation-delay:.7s"/>
+<use class="tw" href="#d-sparkle" x="190" y="112" width="20" height="20" style="--f:#bfd8e3;animation-delay:1.2s"/>
+<use class="tw" href="#d-star" x="34" y="112" width="20" height="20" style="--f:#b5c9aa;animation-delay:.3s"/>
+<g class="beat"><use href="#d-heart" x="66" y="38" width="108" height="108" style="--f:#f6dc8e"/></g>
+</svg>`,
+    tap(){burst(16,100,GL.mix)}}
+};
+function mountFx(stage,occ){
+  const key=FX[occ]?occ:"other",f=FX[key];
+  stage.className="fx fx-"+key;
+  stage.innerHTML=`<button class="fx-btn" type="button" aria-label="${f.label}">${f.svg}</button><p class="fx-cap" aria-live="polite">${f.cap}</p>`;
+  const cap=stage.querySelector(".fx-cap");
+  stage.querySelector(".fx-btn").addEventListener("click",()=>f.tap(stage,cap,f));
+  if(f.init)f.init(stage);
+}
+
+/* ---------- ซองจดหมาย (ใช้ซ้ำทั้งเดโม หน้าการ์ด และตัวอย่างใน Studio) ---------- */
+const FACE=`<svg class="env-face" viewBox="0 0 76 34" aria-hidden="true"><circle cx="24" cy="12" r="2.8" fill="#4a3c31"/><circle cx="52" cy="12" r="2.8" fill="#4a3c31"/><path d="M33 17q5 5 10 0" fill="none" stroke="#4a3c31" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="15" cy="20" rx="6" ry="3.4" fill="#f2b5ad" opacity=".85"/><ellipse cx="61" cy="20" rx="6" ry="3.4" fill="#f2b5ad" opacity=".85"/></svg>`;
+const LETTER_TPL=`<article class="letter">
+<p class="l-kicker">มีจดหมายส่งมาถึงคุณ</p>
+<h2 class="l-headline"></h2>
+<p class="l-intro"></p>
+<button class="env-btn" type="button" aria-label="เปิดซองจดหมาย"><span class="envelope"><span class="env-back"></span><span class="env-peek"></span><span class="env-flap"></span><span class="env-pocket"></span><span class="env-seal">♡</span>${FACE}</span></button>
+<p class="hint">แตะที่ซองเพื่อเปิดจดหมาย</p>
+<div class="message">
+<div class="fx-stage"></div>
+<img class="photo" alt="รูปภาพประกอบจดหมาย">
+<h3 class="l-title"></h3>
+<p class="message-text"></p>
+<p class="signature"></p>
+<div class="music-row"><p>เพลงที่อยากมอบให้คุณ ♫</p><audio controls preload="none"></audio></div>
+<button class="end-btn" type="button">กดรับความรักอีกครั้ง ♡</button>
+<p class="end-note" aria-live="polite"></p>
+<button class="replay" type="button">เปิดซองอีกครั้ง</button>
+</div></article>`;
+
+function mountLetter(root,input){
+  root.innerHTML=LETTER_TPL;
+  const q=s=>root.querySelector(s);
+  const env=q(".envelope"),hint=q(".hint"),msg=q(".message"),endNote=q(".end-note"),photo=q(".photo"),audio=q("audio"),row=q(".music-row"),stage=q(".fx-stage");
+  let opened=false,occ="other";
+  function fill(x){
+    const d={...DEFAULTS,...x};occ=d.occ;
+    q(".l-headline").textContent=d.to?"มีจดหมายถึง "+d.to+" ♡":"มีจดหมายถึงเธอ";
+    q(".l-intro").textContent=d.from?"มีบางอย่างที่ "+d.from+" อยากบอกคุณ กดเปิดซองดูนะ":"มีบางอย่างที่เราอยากบอกเธอ กดเปิดซองดูนะ";
+    q(".l-title").textContent=d.title||DEFAULTS.title;
+    q(".message-text").textContent=d.body||DEFAULTS.body;
+    q(".signature").textContent=d.from?"ด้วยรัก, "+d.from:"จากคนที่คิดถึงเธอ";
+    endNote.dataset.text=d.end||DEFAULTS.end;
+    photo.classList.remove("show");photo.removeAttribute("src");
+    if(d.photo){photo.onload=()=>photo.classList.add("show");photo.onerror=()=>photo.classList.remove("show");photo.src=d.photo}
+    audio.pause();audio.removeAttribute("src");row.classList.remove("show");
+    if(d.music){audio.src=d.music;row.classList.add("show")}
+    mountFx(stage,occ);
+  }
+  function reset(){
+    opened=false;env.classList.remove("opened");msg.classList.remove("show");endNote.textContent="";
+    hint.textContent="แตะที่ซองเพื่อเปิดจดหมาย";audio.pause();mountFx(stage,occ);
+  }
+  function open(){
+    if(opened)return;opened=true;env.classList.add("opened");hint.textContent="จดหมายของคุณเปิดแล้ว ♡";
+    setTimeout(()=>{
+      msg.classList.add("show");
+      const g=glyphsOf(occ);if(g)burst(14,110,g);
+      msg.scrollIntoView({behavior:reduced?"auto":"smooth",block:"nearest"});
+    },430);
+  }
+  q(".env-btn").addEventListener("click",open);
+  q(".end-btn").addEventListener("click",()=>{endNote.textContent=endNote.dataset.text;burst(14,100,glyphsOf(occ)||GL.heart)});
+  q(".replay").addEventListener("click",()=>{reset();root.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"})});
+  fill(input);
+  return{update(x){fill(x);reset()}};
+}
+
+/* ---------- ข้อความออเดอร์ ---------- */
+function chunkText(t,max){
+  const parts=[];let cur="";
+  const push=()=>{if(cur.trim())parts.push(cur.replace(/\n+$/,""));cur=""};
+  for(let ln of t.split("\n")){
+    while(ln.length>max){if(cur)push();parts.push(ln.slice(0,max));ln=ln.slice(max)}
+    if((cur+ln).length+1>max)push();
+    cur+=ln+"\n";
+  }
+  push();return parts;
+}
+function parseOrder(raw){
+  const t=raw.replace(/^\(ส่วน \d+\/\d+\)\s*$/gm,"");
+  const g=re=>{const m=t.match(re);const v=m?m[1].trim():"";return v==="-"?"":v};
+  const bm=t.match(/ข้อความ:\n([\s\S]*?)\nข้อความปิดท้าย:/);
+  const occLabel=g(/โอกาส:[ \t]*(.*)/);
+  const hit=Object.entries(OCC).find(([,o])=>o.label===occLabel);
+  return{to:g(/ผู้รับ:[ \t]*(.*)/),from:g(/ผู้ส่ง:[ \t]*(.*)/),title:g(/หัวข้อ:[ \t]*(.*)/),end:g(/ข้อความปิดท้าย:[ \t]*(.*)/),
+    body:bm?bm[1].trim():"",occ:hit?hit[0]:"other",help:/ให้ร้านช่วยเรียบเรียง:[ \t]*ใช่/.test(t)};
+}
+
+/* ---------- หน้าเว็บขายของ ---------- */
+let demo;
+function initSite(){
+  if(initSite.done)return;initSite.done=true;
+  const lowest=Math.min(...CONFIG.packages.map(p=>p.price));
+  $("heroFine").textContent="ราคาเริ่มต้น ฿"+lowest+" และได้รับการ์ด"+CONFIG.leadTime;
+  const demoBase={to:"มิน",from:"บีม"};
+  demo=mountLetter($("demoRoot"),{...demoBase,...OCC.birthday,occ:"birthday"});
+
+  $("occChips").innerHTML=Object.entries(OCC).map(([k,o])=>`<button type="button" class="chip" data-occ="${k}" aria-pressed="${k==="birthday"}"><svg class="dd" aria-hidden="true"><use href="#${o.icon}"/></svg>${o.label}</button>`).join("");
+  $("occChips").addEventListener("click",e=>{
+    const b=e.target.closest("[data-occ]");if(!b)return;
+    document.querySelectorAll("#occChips .chip").forEach(c=>c.setAttribute("aria-pressed",c===b));
+    demo.update({...demoBase,...OCC[b.dataset.occ],occ:b.dataset.occ});
+    $("demo").scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"});
+  });
+
+  $("priceList").innerHTML=CONFIG.packages.map(p=>`<li class="price-row"><div class="pr-main"><h3>${p.name}${p.badge?`<span class="badge">${p.badge}</span>`:""}</h3><p class="pr-sub">${p.sub}</p><ul>${p.feats.map(f=>`<li>${f}</li>`).join("")}</ul></div><div class="pr-side"><span class="price">฿${p.price}</span><button class="btn ghost" type="button" data-pick="${p.id}">เลือกแบบนี้</button></div></li>`).join("");
+  $("priceList").addEventListener("click",e=>{
+    const b=e.target.closest("[data-pick]");if(!b)return;
+    const r=document.querySelector(`input[name=pkg][value="${b.dataset.pick}"]`);if(r)r.checked=true;
+    $("order").scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});
+  });
+
+  $("pkgGroup").innerHTML=CONFIG.packages.map(p=>`<label class="seg"><input type="radio" name="pkg" value="${p.id}"${p.def?" checked":""}><span><b>${p.name}</b><i>฿${p.price}</i></span></label>`).join("");
+  $("oOcc").innerHTML=occOptions();
+
+  let lastTpl=null;
+  const applyOcc=()=>{
+    const o=OCC[$("oOcc").value];
+    const untouched=!$("oBody").value.trim()||(lastTpl&&$("oBody").value===lastTpl.body);
+    if(!untouched)return;
+    if(o){$("oTitle").value=o.title;$("oBody").value=o.body;$("oEnd").value=o.end;lastTpl=o}
+    else{$("oTitle").value=DEFAULTS.title;$("oBody").value="";$("oEnd").value=DEFAULTS.end;lastTpl=null}
+  };
+  $("oOcc").addEventListener("change",applyOcc);
+  applyOcc();
+
+  $("faqList").innerHTML=FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join("");
+  $("footContact").textContent=CONFIG.contactHandle;$("footContact").href=CONFIG.profileUrl;
+  $("openChat").href=CONFIG.contactUrl;
+
+  $("orderForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const v=id=>$(id).value.trim(),help=$("oHelp").checked;
+    const err=!v("oTo")?"กรุณาใส่ชื่อผู้รับ":!v("oBody")?(help?"กรุณาเล่าเรื่องคร่าว ๆ ในช่องข้อความ เพื่อให้ร้านเรียบเรียงให้":"กรุณาใส่ข้อความในจดหมาย หรือติ๊กให้ร้านช่วยเรียบเรียง"):"";
+    if(err){show($("orderMsg"),err,false);return}
+    $("orderMsg").hidden=true;
+    const pkg=CONFIG.packages.find(p=>p.id===document.querySelector("input[name=pkg]:checked").value);
+    const occLabel=OCC[$("oOcc").value]?OCC[$("oOcc").value].label:"อื่น ๆ";
+    const text=[
+      "สั่งทำการ์ด Little Letter",
+      "แพ็กเกจ: "+pkg.name+" ฿"+pkg.price,
+      "โอกาส: "+occLabel,
+      "ผู้รับ: "+v("oTo"),
+      "ผู้ส่ง: "+(v("oFrom")||"-"),
+      "หัวข้อ: "+(v("oTitle")||"-"),
+      "ให้ร้านช่วยเรียบเรียง: "+(help?"ใช่":"ไม่"),
+      "ข้อความ:\n"+$("oBody").value.trim(),
+      "ข้อความปิดท้าย: "+(v("oEnd")||"-"),
+      "รูปและเพลง: "+(v("oExtra")||"ไม่ใส่"),
+      "ต้องการให้พร้อม: "+(v("oWhen")||"เร็วที่สุด"),
+      "IG ลูกค้า: "+(v("oContact")||"-")
+    ].join("\n");
+    const raw=chunkText(text,880),parts=raw.length>1?raw.map((p,i)=>`(ส่วน ${i+1}/${raw.length})\n${p}`):raw;
+    $("partsNote").hidden=parts.length<2;
+    $("orderParts").innerHTML=parts.map((p,i)=>`<div class="part"><label class="hint-s" for="op${i}">${parts.length>1?`ส่วนที่ ${i+1} จาก ${parts.length}`:"ข้อความออเดอร์"}</label><textarea class="out" id="op${i}" readonly></textarea><button class="btn ghost" type="button" data-copy="${i}">${parts.length>1?`คัดลอกส่วนที่ ${i+1}`:"คัดลอกออเดอร์"}</button></div>`).join("");
+    parts.forEach((p,i)=>{$("op"+i).value=p});
+    $("copyMsg").hidden=true;$("orderResult").hidden=false;
+    $("orderResult").scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});
+  });
+  $("orderParts").addEventListener("click",async e=>{
+    const b=e.target.closest("[data-copy]");if(!b)return;
+    const ta=$("op"+b.dataset.copy),ok=await copyText(ta.value,ta);
+    show($("copyMsg"),ok?"คัดลอกแล้ว เปิด Instagram ร้านแล้ววางได้เลย":"คัดลอกอัตโนมัติไม่ได้ แตะค้างที่ข้อความแล้วเลือกคัดลอก",ok);
+  });
+}
+
+/* ---------- Studio ---------- */
+let studioLink="";
+function readStudio(){
+  return{
+    occ:$("sOcc").value,to:$("sTo").value.trim().slice(0,60),from:$("sFrom").value.trim().slice(0,60),
+    title:$("sTitle").value.trim().slice(0,90)||DEFAULTS.title,body:$("sBody").value.slice(0,1800),
+    end:$("sEnd").value.trim().slice(0,160)||DEFAULTS.end,
+    photo:safeUrl($("sPhoto").value,"รูปภาพ"),music:safeUrl($("sMusic").value,"เพลง")
+  };
+}
+function fillStudio(d){
+  const x={...DEFAULTS,...d};
+  $("sOcc").value=(x.occ in OCC)?x.occ:"other";
+  $("sTo").value=x.to;$("sFrom").value=x.from;$("sTitle").value=x.title;$("sBody").value=x.body;
+  $("sEnd").value=x.end;$("sPhoto").value=x.photo;$("sMusic").value=x.music;
+}
+function initStudio(){
+  if(initStudio.done)return;initStudio.done=true;
+  $("studioFile").hidden=location.protocol!=="file:";
+  $("sOcc").innerHTML=occOptions();
+  fillStudio({body:""});
+  mountLetter($("sPreviewRoot"),DEFAULTS);
+  const sMsg=t=>show($("sMsg"),t,false);
+  $("sOcc").addEventListener("change",()=>{try{mountLetter($("sPreviewRoot"),readStudio())}catch(e){}});
+  $("sImportBtn").addEventListener("click",async()=>{
+    const raw=$("sImport").value,m=raw.match(/#(?:studio|card)=([A-Za-z0-9_-]+)/);
+    try{
+      let d,help=false;
+      if(m)d=await decode(m[1]);
+      else{d=parseOrder(raw);help=d.help;if(!d.to&&!d.body)throw Error("none")}
+      fillStudio(d);mountLetter($("sPreviewRoot"),readStudio());
+      if(help)sMsg("ลูกค้าขอให้ร้านช่วยเรียบเรียง แก้ข้อความในช่องด้านล่างให้เรียบร้อยก่อนสร้างลิงก์");else $("sMsg").hidden=true;
+    }catch(e){sMsg("อ่านข้อมูลออเดอร์ไม่ได้ ตรวจว่าวางข้อความออเดอร์ครบทุกส่วน")}
+  });
+  $("sPreviewBtn").addEventListener("click",()=>{
+    try{mountLetter($("sPreviewRoot"),readStudio());$("sMsg").hidden=true;$("sPreviewRoot").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){sMsg(e.message)}
+  });
+  $("sMakeBtn").addEventListener("click",async()=>{
+    try{
+      const d=readStudio();
+      if(!d.body.trim()){sMsg("ยังไม่มีข้อความในจดหมาย");return}
+      studioLink=base()+"#card="+await encode(d);
+      $("sLink").value=studioLink;
+      $("sDeliver").value="การ์ดของคุณเสร็จแล้ว ♡\nลิงก์การ์ดสำหรับส่งให้ "+(d.to||"คนพิเศษ")+":\n"+studioLink+"\n\nเปิดบนมือถือและเปิดเสียงไว้ แล้วแตะที่ซองจดหมายได้เลย\nลองเปิดดูก่อนส่งจริงได้นะ ถ้าอยากแก้ตรงไหนบอกได้เลย";
+      $("sOut").hidden=false;$("sMsg").hidden=true;mountLetter($("sPreviewRoot"),d);
+      const L=studioLink.length,M=$("sDeliver").value.length;
+      if(L>1000)show($("sCopyMsg"),"ลิงก์ยาว "+L+" ตัวอักษร ยาวเกินที่ Instagram ส่งได้ในข้อความเดียว (ประมาณ 1,000 ตัวอักษร) ให้ย่อข้อความในจดหมายให้สั้นลง หรือส่งทางช่องทางอื่นแทน",false);
+      else if(M>1000)show($("sCopyMsg"),"ข้อความส่งมอบยาว "+M+" ตัวอักษร ให้ส่งลิงก์แยกอีกข้อความ โดยกดคัดลอกเฉพาะลิงก์",false);
+      else $("sCopyMsg").hidden=true;
+      $("sOut").scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(e){sMsg(e.message||"ตรวจสอบข้อมูลอีกครั้ง")}
+  });
+  $("sCopyDeliver").addEventListener("click",async()=>{const ok=await copyText($("sDeliver").value,$("sDeliver"));show($("sCopyMsg"),ok?"คัดลอกข้อความส่งมอบแล้ว นำไปวางในแชตลูกค้าได้เลย":"คัดลอกอัตโนมัติไม่ได้ แตะค้างที่ข้อความแล้วเลือกคัดลอก",ok)});
+  $("sCopyLink").addEventListener("click",async()=>{const ok=await copyText(studioLink,$("sLink"));show($("sCopyMsg"),ok?"คัดลอกลิงก์แล้ว":"คัดลอกอัตโนมัติไม่ได้ แตะค้างที่ลิงก์แล้วเลือกคัดลอก",ok)});
+  $("sShare").addEventListener("click",async()=>{
+    if(!studioLink)return;
+    if(navigator.share){try{await navigator.share({title:"จดหมายถึงคนพิเศษ",text:"มีจดหมายเซอร์ไพรส์ถึงคุณ ♡",url:studioLink})}catch(e){}}
+    else show($("sCopyMsg"),"อุปกรณ์นี้ไม่รองรับการแชร์อัตโนมัติ ให้คัดลอกลิงก์แทน",false);
+  });
+}
+
+/* ---------- เลือกหน้าตาม URL ---------- */
+async function route(){
+  const h=location.hash,isCard=h.startsWith("#card="),isStudio=h.startsWith("#studio");
+  $("viewCard").hidden=!isCard;$("viewStudio").hidden=!isStudio;$("viewSite").hidden=isCard||isStudio;
+  if(isCard){
+    document.title="จดหมายถึงคุณ ♡";$("promoLink").href=base();
+    try{mountLetter($("cardRoot"),await decode(h.slice(6)))}
+    catch(e){$("cardRoot").innerHTML='<div class="letter"><h2 class="l-headline">เปิดการ์ดไม่ได้</h2><p class="l-intro">ลิงก์อาจถูกตัดหรือไม่ครบ ลองขอลิงก์ใหม่จากผู้ส่งอีกครั้ง</p></div>'}
+  }else if(isStudio){
+    document.title="Studio — Little Letter";initStudio();
+    if(h.startsWith("#studio=")){try{fillStudio(await decode(h.slice(8)));mountLetter($("sPreviewRoot"),readStudio())}catch(e){show($("sMsg"),"อ่านข้อมูลจากลิงก์ไม่ได้",false)}}
+  }else{
+    document.title="Little Letter — การ์ดเซอร์ไพรส์ซองจดหมาย ส่งเป็นลิงก์ให้คนพิเศษ";initSite();
+  }
+  if(isCard||isStudio)window.scrollTo(0,0);
+}
+
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-go]");if(!a)return;
+  e.preventDefault();
+  const t=a.dataset.go==="top"?document.body:$(a.dataset.go);
+  if(t)t.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});
+});
+window.addEventListener("hashchange",route);
+route();
+})();
+</script>
+</body>
+</html>
